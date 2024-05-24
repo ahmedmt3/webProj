@@ -1,0 +1,9 @@
+<div class="navbar">
+    <a href="{% url 'books' %}">Home</a>
+    <a href="#catalogue">Library Catalogue</a>
+    <a href="{% url 'borrowed' %}">Borrowed Books</a>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search books...">
+        <button onclick="searchBooks()">Search</button>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<title>Online Library Homepage</title>
+
+</head>
+<body>
+
+    <!-- Navbar -->
+
+    <div class="hero">
+    <div class="overlay"></div>
+    <div class="hero-text">
+        <h1>Welcome to Our Online Library</h1>
+        <p>Discover a world of knowledge and adventure with our extensive collection of books. Whether you're looking for the latest bestsellers or timeless classics, our library is open to all book enthusiasts.</p>
+    </div>
+    </div>
+
+    <div id="searchResults"></div>
+
+    <div class="grid-container">
+    <!-- Books will be dynamically inserted here -->
+    {% for book in books %}
+      
+      <div class="card">
+        <img src= "{{book.image.url}}", alt='{{book.title}}'>
+        <h4> {{book.title}}</h4>
+        <p>Author:  {{book.author}}</p>
+        <p>Category: {{book.category}}</p>
+        <p>Status:  
+            {% if book.borrowed == True %} 
+              Borrowed 
+              {%else%} Unborrowed
+            {%endif%}
+        </p>
+      </div>
+
+    {% endfor %}
+
+    </div>
+
+</body>
+</html>
+
+{% endblock content %}
