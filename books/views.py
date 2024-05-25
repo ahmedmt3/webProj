@@ -1,7 +1,23 @@
 from django.shortcuts import render
-from .models import Book
+from .models import Book, User
 
 # Create your views here.
+def signup(request):
+    if(request.method == 'POST'):
+        fullname = request.POST.get('fullname')
+        email = request.POST.get('email')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        data = User(
+                fullname= fullname, 
+                email = email, 
+                username= username, 
+                password= password
+            )
+        data.save()
+    
+    return render(request, 'books/signup.html')
+
 def books(request):
     return render(request, 'books/books.html', {'books': Book.objects.all()})
 
