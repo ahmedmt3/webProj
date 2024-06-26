@@ -25,7 +25,7 @@
         <label for="password">Password</label>
         <input type="password" name="password" id="password"><br>
         <div id="password_error" style="color: red;"></div>
-
+        <div style="height: 5dvh;"></div>
         <button type="submit">Login</button>
       </form>
 
@@ -49,9 +49,9 @@
                     data: formData,
                     success: function(response) {
                         if (response.success) {
+                            $('#loginForm')[0].reset();
                             alert(response.message);
-                            
-                            window.location.replace("{% url 'books' %}");
+                            window.location.href = response.redirect;
 
                         } else {
                             if (response.errors) {

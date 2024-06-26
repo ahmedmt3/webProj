@@ -26,7 +26,7 @@
 
   /* Style for the hero section */
   .hero {
-    background-image: url('https://source.unsplash.com/random/1920x1080/?library');
+    background-image: url('../images/background.jpg');
     background-size: cover;
     background-position: center;
     height: 50vh;
