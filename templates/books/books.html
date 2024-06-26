@@ -27,25 +27,25 @@
     <div id="searchResults"></div>
 
     <div class="grid-container">
-    <!-- Books will be dynamically inserted here -->
-    {% for book in books %}
-      
-      <div class="card">
-        <img src= "{{book.image.url}}", alt='{{book.title}}'>
-        <h4> {{book.title}}</h4>
-        <p>Author:  {{book.author}}</p>
-        <p>Category: {{book.category}}</p>
-        <p>Status:  
-            {% if book.borrowed == True %} 
-              Borrowed 
-              {%else%} Unborrowed
-            {%endif%}
-        </p>
+      <!-- Books will be dynamically inserted here -->
+      {% for book in books %}
+        <a href="{% url 'book_details' book.id %}">
+          <div class="card">
+            <img src= "{{book.image.url}}", alt='{{book.title}}'>
+            <h4> {{book.title}}</h4>
+            <p>Author:  {{book.author}}</p>
+            <p>Category: {{book.category}}</p>
+            <p>
+                {% if book.borrowed == True %} 
+                  Unavailable 
+                  {%else%} Available
+                {%endif%}
+            </p>
+          </div>
+        </a>
+      {% endfor %}
+  
       </div>
-
-    {% endfor %}
-
-    </div>
 
 </body>
 </html>

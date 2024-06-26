@@ -4,7 +4,7 @@ from .models import Book, User
 # Register your models here.
 
 class BookAdmin(admin.ModelAdmin):
-    list_display = ['title', 'author', 'borrowed', 'category']
+    list_display = ['id', 'title', 'author', 'borrowed', 'category']
     list_editable = ['borrowed', 'category']
 
 class UserAdmin(admin.ModelAdmin):

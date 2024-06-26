@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 class User(models.Model):
+    
     fullname = models.CharField(max_length=50, default='Full name')
     email = models.CharField(max_length=50, default='email@email.com')
     username = models.CharField(max_length=50)
@@ -23,7 +24,7 @@ class Book(models.Model):
         ('Science Fiction', 'Science Fiction'),
         ('Historical Fiction', 'Historical Fiction'),
     ]
-    
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50)
     author = models.CharField(max_length=50)
     category = models.CharField(max_length=50, choices= categ)
