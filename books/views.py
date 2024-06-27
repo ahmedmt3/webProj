@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login as auth_login
@@ -9,8 +9,19 @@ from .models import Book, User
 def books(request):
     return render(request, 'books/books.html', {'books': Book.objects.all()})
 
-def book(request):
-    return render(request, 'books/book.html')
+def user_books(request):
+    username = request.session.get('username', 'Guest')
+    fullname = get_object_or_404(User, pk=username)
+    return render(request, 'books/userBooks.html', {'books': Book.objects.all(), 'fullname' : fullname, 'username' : username})
+
+def book(request, id):
+    book = get_object_or_404(Book, pk=id)
+    return render(request, 'books/book.html', {'book': book})
+
+def user_book(request, id, username):
+    book = get_object_or_404(Book, pk=id)
+    fullname = get_object_or_404(User, pk=username)
+    return render(request, 'books/userBook.html', {'book': book, 'fullname' : fullname, 'username' : username})
 
 def borrowed(request):
     books = Book.objects.all()
@@ -62,13 +73,39 @@ def signup(request):
         )
         user.save()
 
-        return JsonResponse({'success': True, 'message': 'User registered successfully.', 'redirect': '/books/'})
+        return JsonResponse({'success': True, 'message': 'User registered successfully.', 'redirect': '/login/'})
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
 
 def login_page(request):
     return render(request, 'books/login.html')
 
+# @csrf_exempt
+# def login(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+        
+#         errors = {}
+#         if not username:
+#             errors['username'] = 'Username is required.'
+#         if not password:
+#             errors['password'] = 'Password is required.'
+            
+#         if errors:
+#             return JsonResponse({'success': False, 'errors': errors})
+        
+#         # Check if the username exists in the database
+#         try:
+#             user = User.objects.get(username=username, password=password)
+#             return JsonResponse({'success': True, 'message': 'Login successful.', 'redirect': '/application/books/', 'username' : username})
+        
+#         except User.DoesNotExist:
+#             errors['password'] = 'Invalid username or password.'
+#             return JsonResponse({'success': False, 'errors': errors})
+        
+#     JsonResponse({'success': False, 'errors': 'Invalid Request Method'})
+        
 @csrf_exempt
 def login(request):
     if request.method == 'POST':
@@ -87,12 +124,13 @@ def login(request):
         # Check if the username exists in the database
         try:
             user = User.objects.get(username=username, password=password)
-            return JsonResponse({'success': True, 'message': 'Login successful.', 'redirect': '/books/'})
+            # Store username in session
+            request.session['username'] = username
+            return JsonResponse({'success': True, 'message': 'Login successful.', 'redirect': '/application/books/'})
         
         except User.DoesNotExist:
             errors['password'] = 'Invalid username or password.'
             return JsonResponse({'success': False, 'errors': errors})
         
-    JsonResponse({'success': False, 'errors': 'Invalid Request Method'})
-        
+    return JsonResponse({'success': False, 'errors': 'Invalid Request Method'})
     

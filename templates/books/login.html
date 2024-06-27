@@ -1,4 +1,3 @@
-
 {% block content %}
 
 <!DOCTYPE html>
@@ -29,7 +28,7 @@
         <button type="submit">Login</button>
       </form>
 
-      <!-- Ajax script -->
+      <!-- Ajax script
       <script>
         $(document).ready(function() {
             $('#loginForm').on('submit', function(e) {
@@ -72,7 +71,53 @@
                 });
             });
         });
-    </script>
+    </script> -->
+
+    <!-- Ajax script -->
+<script>
+    $(document).ready(function() {
+        $('#loginForm').on('submit', function(e) {
+            e.preventDefault();
+
+            // Clear previous error messages
+            $('#username_error').text('');
+            $('#password_error').text('');
+
+            // Serialize form data
+            var formData = $(this).serialize();
+
+            // Send Ajax request
+            $.ajax({
+                type: 'POST',
+                url: '{% url "login" %}',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        $('#loginForm')[0].reset();
+                        alert(response.message);
+                        window.location.href = response.redirect;
+
+                    } else {
+                        if (response.errors) {
+                            if (response.errors.username) {
+                                $('#username_error').text(response.errors.username);
+                            }
+                            if (response.errors.password) {
+                                $('#password_error').text(response.errors.password);
+                            }
+                        } else {
+                            alert('Unknown error occurred.');
+                        }
+                    }
+                },
+                error: function() {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
 
