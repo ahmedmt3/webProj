@@ -1,7 +1,6 @@
 <div class="navbar">
     <a href="{% url 'user_books' %}">Home</a>
-    <a href="#catalogue">Library Catalogue</a>
-    <a href="{% url 'borrowed' %}">Borrowed Books</a>
+    <a href="{% url 'user_borrowed' username %}">Borrowed Books</a>
     <a href="{% url 'books' %}">Logout</a>
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="Search books...">

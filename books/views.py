@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, login as auth_login
-from .models import Book, User
-
-# Create your views here.
+from .models import Book, User, Borrow
+from django.db.models import Q 
 
 def books(request):
     return render(request, 'books/books.html', {'books': Book.objects.all()})
@@ -27,6 +25,11 @@ def borrowed(request):
     books = Book.objects.all()
     x = {'books' : books.filter(borrowed=True)}
     return render(request, 'books/borrowed.html', x)
+
+def user_borrowed(request, username):
+    user = get_object_or_404(User, username=username)
+    borrowed_books = Book.objects.filter(borrower=user)
+    return render(request, 'books/userBorrowed.html', {'books': borrowed_books, 'username' : username})
 
 def signup_page(request):
     return render(request, 'books/signup.html')
@@ -76,35 +79,8 @@ def signup(request):
         return JsonResponse({'success': True, 'message': 'User registered successfully.', 'redirect': '/login/'})
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
-
 def login_page(request):
     return render(request, 'books/login.html')
-
-# @csrf_exempt
-# def login(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-        
-#         errors = {}
-#         if not username:
-#             errors['username'] = 'Username is required.'
-#         if not password:
-#             errors['password'] = 'Password is required.'
-            
-#         if errors:
-#             return JsonResponse({'success': False, 'errors': errors})
-        
-#         # Check if the username exists in the database
-#         try:
-#             user = User.objects.get(username=username, password=password)
-#             return JsonResponse({'success': True, 'message': 'Login successful.', 'redirect': '/application/books/', 'username' : username})
-        
-#         except User.DoesNotExist:
-#             errors['password'] = 'Invalid username or password.'
-#             return JsonResponse({'success': False, 'errors': errors})
-        
-#     JsonResponse({'success': False, 'errors': 'Invalid Request Method'})
         
 @csrf_exempt
 def login(request):
@@ -133,4 +109,51 @@ def login(request):
             return JsonResponse({'success': False, 'errors': errors})
         
     return JsonResponse({'success': False, 'errors': 'Invalid Request Method'})
+
+
+@csrf_exempt
+def borrow_book(request, id):
+    if request.method == 'POST':
+        username = request.session.get('username')
+        if not username:
+            return JsonResponse({'success': False, 'message': 'User not logged in.'})
+        
+        user = get_object_or_404(User, pk=username)
+        book = get_object_or_404(Book, pk=id)
+        
+        if book.borrowed:
+            if book.borrower == user:
+                # Return the book
+                book.borrowed = False
+                book.borrower = None
+                book.save()
+
+                Borrow.objects.filter(user=user, book=book).delete()
+
+                return JsonResponse({'success': True, 'message': 'Book returned successfully.'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Book already borrowed by another user.'})
+        else:
+            # Borrow the book
+            if Borrow.objects.filter(user=user, book=book).exists():
+                return JsonResponse({'success': False, 'message': 'You have already borrowed this book.'})
+            
+            book.borrowed = True
+            book.borrower = user
+            book.save()
+
+            Borrow.objects.create(user=user, book=book)
+
+            return JsonResponse({'success': True, 'message': 'Book borrowed successfully.'})
     
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+def search_books(request):
+    query = request.GET.get('q', '').lower()
+    filtered_books = Book.objects.filter(
+        Q(title__icontains=query) |
+        Q(author__icontains=query) |
+        Q(category__icontains=query)
+    )
+
+    return render(request, 'books/books.html', {'books': filtered_books})

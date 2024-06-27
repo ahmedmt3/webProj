@@ -15,7 +15,6 @@
      <div class="grid-container">
         <!-- Books will be dynamically inserted here -->
         {% for book in books %}
-          
           <div class="card">
             <img src= "{{book.image.url}}", alt='{{book.title}}'>
             <h4> {{book.title}}</h4>
@@ -23,7 +22,6 @@
             <p>Category: {{book.category}}</p>
             <p>Status: Borrowed</p>
           </div>
-    
         {% endfor %}
     
         </div>
