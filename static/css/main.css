@@ -58,6 +58,13 @@
     height: 50%;
     align-items: center;
     justify-content: center;
+    padding: 48px;
+  }
+  
+  .book img{
+    height: 85vh;
+    width: auto;
+    border-radius: 24px;
   }
 
   .book-details{
@@ -66,6 +73,18 @@
     flex-direction: column;
     gap: 24px;
 
+  }
+
+  .book-details h1{
+    font-size: 5rem;
+  }
+
+  .book-details h3{
+    font-size: 3rem;
+  }
+
+  .book-details p{
+    font-size: 2rem;
   }
 
   .availability{
@@ -77,11 +96,13 @@
 
   .borrow-btn{
     background: #333;
+    width: fit-content;
     color: #fefefe;
-    padding: 16px;
+    padding: 24px ;
     width: 128px;
-    border-radius: 8px;
+    border-radius: 48px;
     border: none;
     cursor: pointer;
+    font-size: 24px;
 }
   
